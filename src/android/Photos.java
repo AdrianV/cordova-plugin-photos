@@ -45,6 +45,7 @@ import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -108,7 +109,7 @@ public class Photos extends CordovaPlugin {
 
 	@SuppressWarnings("MismatchedReadAndWriteOfArray")
 	private static final String[] PRJ_COLLECTIONS =
-			new String[]{"DISTINCT " + BUCKET_ID, BUCKET_DISPLAY_NAME};
+			new String[]{BUCKET_ID, BUCKET_DISPLAY_NAME};
 
 	@SuppressWarnings("MismatchedReadAndWriteOfArray")
 	private static final String[] PRJ_PHOTOS =
@@ -217,11 +218,17 @@ public class Photos extends CordovaPlugin {
 				DEFAULT_SORT_ORDER)) {
 			final JSONArray result = new JSONArray();
 			if (cursor.moveToFirst()) {
+				final HashMap<String, String> all = new HashMap();
 				do {
+					final String bid = cursor.getString(cursor.getColumnIndex(BUCKET_ID));
+					final String bDisplay = cursor.getString(cursor.getColumnIndex(BUCKET_DISPLAY_NAME));
+					if ( ! all.containsKey(bid)) {
+						all.put(bid, bDisplay);
 					final JSONObject item = new JSONObject();
-					item.put(P_ID, cursor.getString(cursor.getColumnIndex(BUCKET_ID)));
-					item.put(P_NAME, cursor.getString(cursor.getColumnIndex(BUCKET_DISPLAY_NAME)));
+						item.put(P_ID, bid);
+						item.put(P_NAME, bDisplay);
 					result.put(item);
+					}
 				} while (cursor.moveToNext());
 			}
 			callbackContext.success(result);
@@ -365,8 +372,14 @@ public class Photos extends CordovaPlugin {
 
 			Matrix matrix = new Matrix();
 			matrix.postRotate(orientation);
-			width = Math.min(width, image.getWidth());
-			height = Math.min(height, image.getHeight());
+			if (width > 0)
+				width =  Math.min(width, image.getWidth())
+			else
+				width = image.getWidth();
+			if (height > 0)
+				height = Math.min(height, image.getHeight())
+			else
+				height = image.getHeight();
 			Bitmap rotatedBitmap = Bitmap.createBitmap(image, 0, 0, image.getWidth(), image.getHeight(), matrix, true);
 			rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, DEF_QUALITY, osImage);
 
