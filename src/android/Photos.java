@@ -373,11 +373,11 @@ public class Photos extends CordovaPlugin {
 			Matrix matrix = new Matrix();
 			matrix.postRotate(orientation);
 			if (width > 0)
-				width =  Math.min(width, image.getWidth())
+				width =  Math.min(width, image.getWidth());
 			else
 				width = image.getWidth();
 			if (height > 0)
-				height = Math.min(height, image.getHeight())
+				height = Math.min(height, image.getHeight());
 			else
 				height = image.getHeight();
 			Bitmap rotatedBitmap = Bitmap.createBitmap(image, 0, 0, image.getWidth(), image.getHeight(), matrix, true);
