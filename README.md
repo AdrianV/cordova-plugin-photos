@@ -302,7 +302,21 @@ you may pick it up in `contentType` property of results of [`photos()`][photos] 
 
 #### Arguments
 
-A required `photoId` argument that is a photo ID you obtained by [`photos()`][photos] function.
+> A required `photoId` argument that is a photo ID you obtained by [`photos()`][photos] function.
+
+this seems to have changed. `image()` requires on Android an object of type ImageRequest :
+```
+typedef ImageRequest = {
+	id: String,              // default 0 
+	? orientation: Int,
+	? download_width: Int,   // default 500
+	? download_height: Int,  // default 500
+}
+
+```
+my version checks `download_width` and `download_height` for values of zero or below and uses
+the image width respective height then.
+The behaviour on iOS has to be checked !
 
 #### Callbacks
 
